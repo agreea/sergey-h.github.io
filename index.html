@@ -2,154 +2,146 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-<script
-  src="https://code.jquery.com/jquery-1.12.4.min.js"
-  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-  crossorigin="anonymous"></script>
+	<title>Orders Heatmap</title>
+	<script async defer type="text/javascript"
+	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNdqht8TYJj-xHc7PZ1Z7HnOIlFcpc9QY&libraries=visualization&callback=initMap">
+	</script>
 
   <style>
 
-	.custom-counter {
+	#map {
+	  height: 100%;
+	}
+	/* Optional: Makes the sample page fill the window. */
+	html, body {
+	  height: 100%;
 	  margin: 0;
 	  padding: 0;
-	  list-style-type: none;
-	}
-
-	.custom-counter li {
-	  counter-increment: step-counter;
-	  margin-bottom: 10px;
-	}
-
-	.custom-counter li::before {
-	  content: counter(step-counter);
-	  margin-right: 5px;
-	  font-size: 80%;
-	  background-color: rgb(0,200,200);
-	  color: white;
-	  font-weight: bold;
-	  padding: 3px 8px;
-	  border-radius: 3px;
 	}
 
   </style>
 </head>
 <body>
 
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<h1>Множитель слов</h1>
-			</div>
-		</div>	
-		<div class="row">	
-			<div class="col-12">
-				<form id="mnozitel">
-				  <div class="form-group">
-				    <textarea class="form-control" id="words" rows="3" ></textarea>
-				    <button type=submit>Ксерокс!</button>
-				  </div>
-				</form>
-			</div>	
-		</div>
-		<div class="row">
-			<div class="col-12">
-				<h3>Результаты</h3>
-				<div id="placeholder">
-				</div>
-			</div>
-		</div>	
-	</div>
+	<div id="map"></div>
 
 	<script>
-		jQuery(document).ready(function($){ 
-			// первая латиница, вторая кирилица
-			var replacements = [
-				[ 'A', 'А' ],
-				[ 'a', 'а' ],
-				[ 'O', 'О' ],
-				[ 'o', 'о' ],
-				[ 'E', 'Е' ],
-				[ 'e', 'е' ],
-				[ 'H', 'Н' ],
-			];
+		var map;
+		function initMap() {
+		  var heatmapData = [
+				new google.maps.LatLng(-1.286412, 36.786682), 
+				new google.maps.LatLng(-1.2609472, 36.7988633), 
+				new google.maps.LatLng(-1.2924658, 36.7866927), 
+				new google.maps.LatLng(-1.2939937, 36.7858227), 
+				new google.maps.LatLng(-1.2924658, 36.7866927), 
+				new google.maps.LatLng(-1.3066676, 36.7355926), 
+				new google.maps.LatLng(-1.3922278, 36.7799011), 
+				new google.maps.LatLng(-1.308869, 36.812077), 
+				new google.maps.LatLng(-1.296722, 36.7912234), 
+				new google.maps.LatLng(-1.3268955, 36.8526944), 
+				new google.maps.LatLng(-1.2639736, 36.7378199), 
+				new google.maps.LatLng(-1.3268955, 36.8526944), 
+				new google.maps.LatLng(-1.2948307, 36.7871865), 
+				new google.maps.LatLng(-1.3625581, 36.9212807), 
+				new google.maps.LatLng(-1.2744208, 36.7027622), 
+				new google.maps.LatLng(-1.2897291, 36.8750517), 
+				new google.maps.LatLng(-1.2530427, 36.7790891), 
+				new google.maps.LatLng(-1.2559765, 36.7829886), 
+				new google.maps.LatLng(-1.2186047, 36.9025344), 
+				new google.maps.LatLng(-1.2805228, 36.7400619), 
+				new google.maps.LatLng(-1.343336, 36.765371), 
+				new google.maps.LatLng(-1.3056088, 36.8008149), 
+				new google.maps.LatLng(-1.2832563, 36.8239976), 
+				new google.maps.LatLng(-1.2715319, 36.8204853), 
+				new google.maps.LatLng(-1.2746111, 36.7780614), 
+				new google.maps.LatLng(-1.3072985, 36.9084173), 
+				new google.maps.LatLng(-1.2598822, 36.8178918), 
+				new google.maps.LatLng(-1.2715319, 36.8204853), 
+				new google.maps.LatLng(-1.2737982, 36.82746), 
+				new google.maps.LatLng(-1.324207, 36.7959605), 
+				new google.maps.LatLng(-1.2194752, 36.8719394), 
+				new google.maps.LatLng(-1.2625873, 36.7941128), 
+				new google.maps.LatLng(-1.2907232, 36.7691572), 
+				new google.maps.LatLng(-1.3121044, 36.8070447), 
+				new google.maps.LatLng(-1.3407661, 36.7360284), 
+				new google.maps.LatLng(-1.2170473, 36.9052053), 
+				new google.maps.LatLng(-1.2955256, 36.7727396), 
+				new google.maps.LatLng(-1.2236005, 36.8993586), 
+				new google.maps.LatLng(-1.2989657, 36.7709881), 
+				new google.maps.LatLng(-1.2465899, 36.785587), 
+				new google.maps.LatLng(-1.2633227, 36.7415671), 
+				new google.maps.LatLng(-1.266499, 36.7909186), 
+				new google.maps.LatLng(-1.2916863, 36.7582334), 
+				new google.maps.LatLng(-1.3145967, 36.8376544), 
+				new google.maps.LatLng(-1.2885851, 36.7582061), 
+				new google.maps.LatLng(-1.324482, 36.7844501), 
+				new google.maps.LatLng(-1.2952022, 36.8035863), 
+				new google.maps.LatLng(-1.2954342, 36.7899084), 
+				new google.maps.LatLng(-1.3221473, 36.7960057), 
+				new google.maps.LatLng(-1.1914027, 36.8993431), 
+				new google.maps.LatLng(-1.2106474, 36.7894119), 
+				new google.maps.LatLng(-1.3630063, 36.7460901), 
+				new google.maps.LatLng(-1.2947681, 36.7977887), 
+				new google.maps.LatLng(-1.323236, 36.7826289), 
+				new google.maps.LatLng(-1.3228552, 36.7982769), 
+				new google.maps.LatLng(-1.3231615, 36.7962587), 
+				new google.maps.LatLng(-1.181056, 36.9272342), 
+				new google.maps.LatLng(-1.181056, 36.9272342), 
+				new google.maps.LatLng(-1.2699327, 36.8070799), 
+				new google.maps.LatLng(-1.181056, 36.9272342), 
+				new google.maps.LatLng(-1.2939794, 36.8939302), 
+				new google.maps.LatLng(-1.30634, 36.816051), 
+				new google.maps.LatLng(-1.3171164, 36.8062882), 
+				new google.maps.LatLng(-1.3248221, 36.8327735), 
+				new google.maps.LatLng(-1.2638854, 36.7986121), 
+				new google.maps.LatLng(-1.2924658, 36.7866927), 
+				new google.maps.LatLng(-1.3060733, 36.73681), 
+				new google.maps.LatLng(-1.2647075, 36.8175444), 
+				new google.maps.LatLng(-1.2398734, 36.8501149), 
+				new google.maps.LatLng(-1.2378113, 36.7381749), 
+				new google.maps.LatLng(-1.3221473, 36.7960057), 
+				new google.maps.LatLng(-1.2865291, 36.7600948), 
+				new google.maps.LatLng(-1.2870228, 36.8010707), 
+				new google.maps.LatLng(-1.291148, 36.7810276), 
+				new google.maps.LatLng(-1.3250147, 36.7843831), 
+				new google.maps.LatLng(-1.3908082, 36.7686536), 
+				new google.maps.LatLng(-1.3908082, 36.7686536), 
+				new google.maps.LatLng(-1.2619444, 36.7415046), 
+				new google.maps.LatLng(-1.2328644, 36.8713044), 
+				new google.maps.LatLng(-1.2971721, 36.7728325), 
+				new google.maps.LatLng(-1.3220749, 36.7752612), 
+				new google.maps.LatLng(-1.291148, 36.7810276), 
+				new google.maps.LatLng(-1.2805228, 36.7400619), 
+				new google.maps.LatLng(-1.2924724, 36.7537331), 
+				new google.maps.LatLng(-1.3068145, 36.7992774), 
+				new google.maps.LatLng(-1.2948307, 36.7871865), 
+				new google.maps.LatLng(-1.2924658, 36.7866927), 
+				new google.maps.LatLng(-1.2361694, 36.749451), 
+				new google.maps.LatLng(-1.381776, 36.7689503), 
+				new google.maps.LatLng(-1.3254721, 36.6691534), 
+				new google.maps.LatLng(-1.2088892, 36.8855345), 
+				new google.maps.LatLng(-1.3023787, 36.7478429), 
+				new google.maps.LatLng(-1.3056088, 36.8008149), 
+				new google.maps.LatLng(-1.3018865, 36.8882332), 
+				new google.maps.LatLng(-1.3018865, 36.8882332), 
+				new google.maps.LatLng(-1.2723169, 36.9162474), 
+				new google.maps.LatLng(-1.2613343, 36.7409423), 
+				new google.maps.LatLng(-1.2186047, 36.9025344), 
+				new google.maps.LatLng(-1.2923195, 36.805974), 
+				new google.maps.LatLng(-1.3098585, 36.8156065), 		
+		  ];
 
-			var readyWords = [];
-
-			$("#mnozitel").submit(function(e){
-				e.preventDefault();
-				var words = $("#words").val().split('\n');
-
-				$("#placeholder").html('');
-
-				words.forEach( function( word ){
-
-					readyWords = [];
-
-					getVariations( word, 0, false );
-
-					var list = $("#placeholder").append( "<ol class='custom-counter'>");
-
-					readyWords.forEach( function( readyWord ){
-						$("#placeholder ol:last").append( "<li>" + readyWord + "</li>" );		
-					} )
-
-					$("#placeholder").append( "<br>" );
-
-
-				} )
-
-				return false;
-			})	
-
-			function getWordVariations( word ) {
-				var variations   = [];
-				var splittedWord = [ word ];
-
-				replacements.forEach( function( replacement ){
-					var newSplitted = [];
-					splittedWord.forEach( function( part, i ){
-						splittedPart     = part.split( replacement[0] );
-						splittedPartFull = splittedPart.map( function(name, k) {
-							if ( k == (splittedPart.length-1) ) {
-								return name;
-							}	
-							else{	
-						  		return name + replacement[0];
-							}
-						}) 
-
-						newSplitted = newSplitted.concat( splittedPartFull );	
-					} )
-					splittedWord = newSplitted;
-				} )
-
-				return splittedWord;
-
-			}
-
-			
-
-			function getVariations( word, index, shouldRecordReplacement = false ) {
-				var splittedWord = getWordVariations( word );
-
-				replacements.forEach( function( replacement ){
-					splittedWord[ index ] = splittedWord[ index ].replace( replacement[0], replacement[1] );
-				})
-
-				if( shouldRecordReplacement ) {
-					readyWords.push( word );
-				}
-
-				if( index <  ( splittedWord.length - 1 ) ) {
-					getVariations( splittedWord.join(""), (index), true );
-					getVariations( word, (index + 1), false );
-				}
-
-				return splittedWord;
-			}
-		})	
+		  map = new google.maps.Map(document.getElementById('map'), {
+		    zoom: 13,
+		    center: {lat: -1.28333, lng: 36.81667}
+		  });
+		  
+			var heatmap = new google.maps.visualization.HeatmapLayer({
+		    data: heatmapData,
+		    radius: 40
+		  });
+		  heatmap.setMap(map);  
+		}		
 	</script>
 	
 </body>
