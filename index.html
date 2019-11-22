@@ -4,6 +4,12 @@
 	<meta charset="UTF-8">
 	<title>Orders Heatmap</title>
 	<script type="text/javascript" src="data.js"></script>		
+	<script type="text/javascript" src="data-price.js"></script>		
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	</script>
+
+	<link rel="stylesheet" href="styles.css">
 	<style>
 
 		#map {
@@ -15,21 +21,57 @@
 		  margin: 0;
 		  padding: 0;
 		}
-
+		#map-switcher {
+			position: absolute;
+			left: 0;
+			top: 100px;
+			z-index: 100;
+			background: #fff;
+			padding: 10px;
+		}
+		#map-switcher a.active {
+			color: #f00;
+		}
 	</style>
 </head>
 <body>
-
+	<div id="map-switcher">
+		<a href="#" id="ordersMapSwitcher" class='switcher active'>Orders map</a> <br>
+		<a href="#" id="ordersMapGMVSwitcher" class='switcher'>Orders GMV map</a> <br>
+		<span>Heat radius:</span>
+		<div id="sliderHeat"></div>
+		<span>Heat opacity:</span>
+		<div id="sliderOpacity"></div>
+	</div>
 	<div id="map"></div>
 
 	<script>
 		var map;
-		function initMap() {
-			var heatmapData = [];
+		var currentMapData;
+		var heatmapData = [];
+		var heatmapDataGMV = [];
+		var heatmap;
 
-			ordersData.forEach( orderData => {
-				heatmapData.push( new google.maps.LatLng(orderData['st_y'], orderData['st_x']) )
-			} )
+		var heatMapRadius = 40;
+		var heatMapOpacity = 0.7;
+
+		function initMap() {				
+			ordersData.forEach( orderDataPrice => {
+				heatmapData.push( 
+				{
+						location: new google.maps.LatLng(orderDataPrice['st_y'], orderDataPrice['st_x']),
+						weight: 3
+				}
+				)		
+			} )	
+
+			ordersDataPrice.forEach( orderDataPrice => {
+				heatmapDataGMV.push( 
+					{ 
+						location: new google.maps.LatLng(orderDataPrice['st_y'], orderDataPrice['st_x']), 
+						weight: orderDataPrice['orderprice']/1000 
+					})
+			} )				
 
 			map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 13,
@@ -38,11 +80,12 @@
 
 			map.data.addGeoJson( zonesJson );
 
+			currentMapData = new google.maps.MVCArray(heatmapData.slice());
 			  
-			var heatmap = new google.maps.visualization.HeatmapLayer({
-			    data: heatmapData,
-			    radius: 40,
-			    opacity: 0.7,
+			heatmap = new google.maps.visualization.HeatmapLayer({
+			    data: currentMapData,
+			    radius: heatMapRadius,
+			    opacity: heatMapOpacity,
 			    maxIntensity: 200,
 			    dissipating: true
 			    // gradient: ['#0000ff', '#ff0000']
@@ -54,6 +97,50 @@
 	<script async defer type="text/javascript"
 	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNdqht8TYJj-xHc7PZ1Z7HnOIlFcpc9QY&libraries=visualization&callback=initMap">
 	</script>	
+	<script>
+		jQuery(document).ready(($)=>{
+			$("#ordersMapSwitcher").click(()=>{
+				$('.switcher.active').removeClass('active')				
+				$("#ordersMapSwitcher").addClass('active')
+				currentMapData.clear()
+				heatmapData.forEach((data)=>{
+					currentMapData.push(data)
+				})				
+				return false
+			})
+			$("#ordersMapGMVSwitcher").click(()=>{
+				$('.switcher.active').removeClass('active')		
+				$("#ordersMapGMVSwitcher").addClass('active')		
+				currentMapData.clear()
+				heatmapDataGMV.forEach((data)=>{
+					currentMapData.push(data)
+				})										
+				return false
+			})		
+
+			$( "#sliderHeat" ).slider({
+				min: 10,
+				max: 80,
+				value: heatMapRadius,
+				slide: function( event, ui ) {
+					heatMapRadius = ui.value;
+					heatmap.set('radius', heatMapRadius);
+				}
+			});	
+
+			$( "#sliderOpacity" ).slider({
+				min: 0,
+				max: 100,
+				value: heatMapOpacity*100,
+				slide: function( event, ui ) {
+					heatMapOpacity = ui.value/100;
+					heatmap.set('opacity', heatMapOpacity);
+				}
+			});				
+
+			
+		})
+	</script>
 	
 </body>
 </html>
