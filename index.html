@@ -56,15 +56,6 @@
 		var heatMapOpacity = 0.7;
 
 		function initMap() {				
-			ordersData.forEach( orderDataPrice => {
-				heatmapData.push( 
-				{
-						location: new google.maps.LatLng(orderDataPrice['st_y'], orderDataPrice['st_x']),
-						weight: 3
-				}
-				)		
-			} )	
-
 			ordersDataPrice.forEach( orderDataPrice => {
 				heatmapDataGMV.push( 
 					{ 
